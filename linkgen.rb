@@ -19,8 +19,8 @@ end
 	puts "Found: #{match}"
 end
 
-#File.open(@linkCSV, 'w') do |wfile|
-#	@matches.each do |match|
-#		wfile.puts(match)
-#	end
-#end
+File.open(@linkCSV, 'w') do |wfile|
+	@matches.each do |match|
+		wfile.puts(match)
+	end
+end
