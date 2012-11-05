@@ -6,7 +6,6 @@ puts "Parsing: #{ARGV[0]}"
 @regex = /<a href="(\S*)"/
 @matches = []
 @linkCSV = "#{File.dirname(__FILE__)}/linkTable.csv"
-puts @linkCSV
 
 File.open(ARGV[0], 'r') do |rfile|
 	while line = rfile.gets
@@ -20,7 +19,11 @@ end
 end
 
 File.open(@linkCSV, 'w') do |wfile|
+	#Format the column headers
+	wfile.puts("FILE_NAME,LINK_NAME,LINK_URL,LINK_CATEGORY")
+
+	#Write each row to the CSV file
 	@matches.each do |match|
-		wfile.puts(match)
+		wfile.puts("#{ARGV[0]},,#{match},")
 	end
 end
