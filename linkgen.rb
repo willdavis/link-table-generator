@@ -1,10 +1,10 @@
 #!/usr/bin/ruby
 
-@regex = /<a href="(\S*)"/
+@regex = /(https?\S*)/
 @matches = []
 @linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linkTable.csv"
 
-puts "Scanning HTML files for <a href> tags..."
+puts "Scanning HTML files for http(s) tags..."
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
 		while line = rfile.gets
