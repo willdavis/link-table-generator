@@ -7,15 +7,17 @@ puts "Parsing: #{ARGV[0]}"
 @matches = []
 @linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linkTable.csv"
 
-File.open(ARGV[0], 'r') do |rfile|
-	while line = rfile.gets
-		match = line.match @regex
-		@matches.push(match[1]) if match
+ARGV.each do |arg|
+	File.open(arg, 'r') do |rfile|
+		while line = rfile.gets
+			match = line.match @regex
+			@matches.push([match[1],arg]) if match
+		end
 	end
 end
 
 @matches.each do |match|
-	puts "Found: #{match}"
+	puts "Found: #{match[0]} in: #{match[1]}"
 end
 
 File.open(@linkCSV, 'w') do |wfile|
@@ -24,6 +26,6 @@ File.open(@linkCSV, 'w') do |wfile|
 
 	#Write each row to the CSV file
 	@matches.each do |match|
-		wfile.puts("#{ARGV[0]},,#{match},")
+		wfile.puts("#{match[1]},,#{match[0]},")
 	end
 end
