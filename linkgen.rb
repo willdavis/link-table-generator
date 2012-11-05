@@ -9,7 +9,7 @@ ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
 		while line = rfile.gets
 			matchdata = line.match @regex
-			@matches.push([matchdata[1],arg]) if match
+			@matches.push([matchdata[1],arg]) if matchdata
 		end
 	end
 end
