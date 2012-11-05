@@ -5,7 +5,7 @@ puts "Parsing: #{ARGV[0]}"
 
 @regex = /<a href="(\S*)"/
 @matches = []
-@linkCSV = "#{File.dirname(__FILE__)}/linkTable.csv"
+@linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linkTable.csv"
 
 File.open(ARGV[0], 'r') do |rfile|
 	while line = rfile.gets
