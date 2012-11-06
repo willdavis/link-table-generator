@@ -1,15 +1,26 @@
 #!/usr/bin/ruby
 
-@regex = /(https?\S*)/
+@regex_html = /<a href="(\S*)"/
+@regex_text = /(https?\S*)/
 @matches = []
 @linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linkTable.csv"
 
-puts "Scanning HTML files for http(s) tags..."
+puts "Scanning HTML files for http(s) substrings..."
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
-		while line = rfile.gets
-			matchdata = line.match @regex
-			@matches.push([matchdata[1],arg]) if matchdata
+		case File.extname(arg)
+		when ".html"
+			while line = rfile.gets
+				matchdata = line.match @regex_html
+				@matches.push([matchdata[1],arg]) if matchdata
+			end
+		when ".txt"
+			while line = rfile.gets
+				matchdata = line.match @regex_text
+				@matches.push([matchdata[1],arg]) if matchdata
+			end
+		else
+			puts "File extension not recognized"
 		end
 	end
 end
