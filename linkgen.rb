@@ -12,12 +12,12 @@ ARGV.each do |arg|
 		when ".html"
 			while line = rfile.gets
 				matchdata = line.match @regex_html
-				@matches.push([matchdata[1],arg]) if matchdata
+				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
 			end
 		when ".txt"
 			while line = rfile.gets
 				matchdata = line.match @regex_text
-				@matches.push([matchdata[1],arg]) if matchdata
+				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
 			end
 		else
 			puts "File extension not recognized"
