@@ -1,5 +1,22 @@
 #!/usr/bin/ruby
 
+class LinkTableRow
+	attr_accessor :file_name, :link_name, :link_url, :link_category, :clickthrough_attributes
+	
+	def initialize(string)
+		line = string.split(",")
+		@link_name = line[0]
+		@link_url = line[1]
+		@link_category = line[2]
+		@clickthrough_attributes = line[3]
+		@file_name = line[4]
+	end
+	
+	def show
+		puts "#{file_name}:#{link_name}:#{link_url}:#{link_category}:#{clickthrough_attributes}"
+	end
+end
+
 @creatives = Hash.new
 @csv_buffer = []
 
@@ -21,12 +38,7 @@ ARGV.each do |arg|
 	end
 end
 
-#DEBUG OUTPUT
-@csv_buffer.each do |item|
-	puts item
+@csv_buffer.each do |line|
+	item = LinkTableRow.new(line)
+	item.show
 end
-
-@creatives.each do |fname, content|
-	puts "#{fname} content is:\n#{content}"
-end
-

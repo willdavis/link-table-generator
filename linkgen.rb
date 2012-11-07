@@ -32,11 +32,11 @@ end
 puts "Creating link table..."
 File.open(@linkCSV, 'w') do |wfile|
 	#Format the column headers
-	wfile.puts("FILE_NAME,LINK_NAME,LINK_URL,LINK_CATEGORY")
+	wfile.puts("LINK_NAME,LINK_URL,LINK_CATEGORY,CLICKTHROUGH_ATTRIBUTES,FILE_NAME")
 
 	#Write each row to the CSV file
 	@matches.each do |match|
-		wfile.puts("#{match[1]},,#{match[0]},")
+		wfile.puts(",#{match[0]},,,#{match[1]}")
 	end
 end
 
