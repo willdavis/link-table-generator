@@ -9,11 +9,15 @@ class LinkTableRow
 		@link_url = line[1]
 		@link_category = line[2]
 		@clickthrough_attributes = line[3]
-		@file_path = line[4].chomp
+		@file_path = line[4].chomp				#Chomp the trailing '\n' off the string
 	end
 	
 	def show
 		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{file_path}"
+	end
+	
+	def build_clickthrough
+		"$clickthrough(#{@link_name},#{@clickthrough_attributes})$ = #{@link_url}"
 	end
 end
 
@@ -43,8 +47,10 @@ puts "All files loaded...\n"
 # loop through the CSV buffer and replace URLs with clickthroughs
 @csv_buffer.each do |line|
 	row = LinkTableRow.new(line)
+	
 	row.show
 	puts @creatives.keys.include?(row.file_path)
+	puts row.build_clickthrough
 end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
