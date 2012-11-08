@@ -11,6 +11,8 @@ class LinkTableRow
 		@clickthrough_attributes = line[3]
 		@clickthrough_delimiter = line[4]
 		@file_path = line[5].chomp				#Chomp the trailing '\n' off the string
+		
+		@clickthrough_delimiter = "#!NULL!#" if @clickthrough_delimiter = ""
 	end
 	
 	def show
@@ -19,7 +21,7 @@ class LinkTableRow
 	
 	def build_clickthrough
 		@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
-		"$clickthrough(#{@link_name},#{@clickthrough_attributes})$"
+		"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
 	end
 end
 
