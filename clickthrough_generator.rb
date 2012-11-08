@@ -1,10 +1,12 @@
 #!/usr/bin/ruby
 
+@delimiter = "|"
+
 class LinkTableRow
 	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes
 	
 	def initialize(string)
-		line = string.split(",")
+		line = string.split(@delimiter)
 		@link_name = line[0]
 		@link_url = line[1]
 		@link_category = line[2]
