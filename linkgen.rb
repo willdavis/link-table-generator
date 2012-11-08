@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-@delimiter = "|"
+@delimiter = ","
 @regex_html = /<a href="(\S*)"/
 @regex_text = /(https?\S*)/
 @matches = []
@@ -33,11 +33,11 @@ end
 puts "Creating link table..."
 File.open(@linkCSV, 'w') do |wfile|
 	#Format the column headers
-	wfile.puts("LINK_NAME#{@delimiter}LINK_URL#{@delimiter}LINK_CATEGORY#{@delimiter}CLICKTHROUGH_ATTRIBUTES#{@delimiter}FILE_PATH")
+	wfile.puts("LINK_NAME#{@delimiter}LINK_URL#{@delimiter}LINK_CATEGORY#{@delimiter}CLICKTHROUGH_ATTRIBUTES#{@delimiter}CLICKTHROUGH_DELIMITER#{@delimiter}FILE_PATH")
 
 	#Write each row to the CSV file
 	@matches.each do |match|
-		wfile.puts("#{@delimiter}#{match[0]}#{@delimiter}#{@delimiter}#{@delimiter}#{match[1]}")
+		wfile.puts("#{@delimiter}#{match[0]}#{@delimiter}#{@delimiter}#{@delimiter}#{@delimiter}#{match[1]}")
 	end
 end
 

@@ -1,24 +1,24 @@
 #!/usr/bin/ruby
 
-@delimiter = "|"
-
 class LinkTableRow
-	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes
+	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes, :clickthrough_delimiter
 	
 	def initialize(string)
-		line = string.split(@delimiter)
+		line = string.split(",")
 		@link_name = line[0]
 		@link_url = line[1]
 		@link_category = line[2]
 		@clickthrough_attributes = line[3]
-		@file_path = line[4].chomp				#Chomp the trailing '\n' off the string
+		@clickthrough_delimiter = line[4]
+		@file_path = line[5].chomp				#Chomp the trailing '\n' off the string
 	end
 	
 	def show
-		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{file_path}"
+		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{@clickthrough_delimiter},#{file_path}"
 	end
 	
 	def build_clickthrough
+		@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
 		"$clickthrough(#{@link_name},#{@clickthrough_attributes})$ = #{@link_url}"
 	end
 end
