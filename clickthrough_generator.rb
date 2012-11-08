@@ -19,7 +19,7 @@ class LinkTableRow
 	
 	def build_clickthrough
 		@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
-		"$clickthrough(#{@link_name},#{@clickthrough_attributes})$ = #{@link_url}"
+		"$clickthrough(#{@link_name},#{@clickthrough_attributes})$"
 	end
 end
 
