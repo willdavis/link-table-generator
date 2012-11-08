@@ -49,10 +49,13 @@ puts "All files loaded...\n"
 # loop through the CSV buffer and replace URLs with clickthroughs
 @csv_buffer.each do |line|
 	row = LinkTableRow.new(line)
-	
-	row.show
-	puts @creatives.keys.include?(row.file_path)
-	puts row.build_clickthrough
+
+	if @creatives.keys.include?(row.file_path)
+		@creatives[row.file_path].sub!(/#{row.link_url}/,row.build_clickthrough)
+	end
 end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
+@creatives.each do |c|
+	puts c
+end
