@@ -29,6 +29,8 @@ end
 # Open files passed via command line and read their contents into a buffer.
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
+		puts "Loading #{rfile.path}..."
+		
 		case File.extname(arg)
 		when ".html"
 			@creatives["#{rfile.path}"] = rfile.read
@@ -44,18 +46,22 @@ ARGV.each do |arg|
 	end
 end
 
-puts "All files loaded...\n"
+puts "All files loaded.\n"
+puts "Building clickthroughs..."
+
 
 # loop through the CSV buffer and replace URLs with clickthroughs
 @csv_buffer.each do |line|
 	row = LinkTableRow.new(line)
 
 	if @creatives.keys.include?(row.file_path)
-		@creatives[row.file_path].sub!(/#{row.link_url}/,row.build_clickthrough)
+		@creatives[row.file_path].sub!(row.link_url,row.build_clickthrough)
 	end
 end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
-@creatives.each do |c|
-	puts c
+@creatives.each_key do |key|
+	File.open(key, 'w') do |wfile|
+		wfile.write(@creatives[key])
+	end
 end
