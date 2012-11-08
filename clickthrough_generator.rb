@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 class LinkTableRow
-	attr_accessor :file_name, :link_name, :link_url, :link_category, :clickthrough_attributes
+	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes
 	
 	def initialize(string)
 		line = string.split(",")
@@ -9,11 +9,11 @@ class LinkTableRow
 		@link_url = line[1]
 		@link_category = line[2]
 		@clickthrough_attributes = line[3]
-		@file_name = line[4]
+		@file_path = line[4].chomp
 	end
 	
 	def show
-		puts "#{file_name}:#{link_name}:#{link_url}:#{link_category}:#{clickthrough_attributes}"
+		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{file_path}"
 	end
 end
 
@@ -38,7 +38,13 @@ ARGV.each do |arg|
 	end
 end
 
+puts "All files loaded...\n"
+
+# loop through the CSV buffer and replace URLs with clickthroughs
 @csv_buffer.each do |line|
-	item = LinkTableRow.new(line)
-	item.show
+	row = LinkTableRow.new(line)
+	row.show
+	puts @creatives.keys.include?(row.file_path)
 end
+
+# All URLs have been replaced.  Save each buffer to their corresponding files

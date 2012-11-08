@@ -12,12 +12,12 @@ ARGV.each do |arg|
 		when ".html"
 			while line = rfile.gets
 				matchdata = line.match @regex_html
-				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
+				@matches.push([matchdata[1],rfile.path]) if matchdata
 			end
 		when ".txt"
 			while line = rfile.gets
 				matchdata = line.match @regex_text
-				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
+				@matches.push([matchdata[1],rfile.path]) if matchdata
 			end
 		else
 			puts "File extension not recognized"
@@ -32,7 +32,7 @@ end
 puts "Creating link table..."
 File.open(@linkCSV, 'w') do |wfile|
 	#Format the column headers
-	wfile.puts("LINK_NAME,LINK_URL,LINK_CATEGORY,CLICKTHROUGH_ATTRIBUTES,FILE_NAME")
+	wfile.puts("LINK_NAME,LINK_URL,LINK_CATEGORY,CLICKTHROUGH_ATTRIBUTES,FILE_PATH")
 
 	#Write each row to the CSV file
 	@matches.each do |match|
