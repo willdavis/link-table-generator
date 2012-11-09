@@ -12,7 +12,7 @@ class LinkTableRow
 		@clickthrough_delimiter = line[4]
 		@file_path = line[5].chomp				#Chomp the trailing '\n' off the string
 		
-		@clickthrough_delimiter = "#!NULL!#" if @clickthrough_delimiter = ""
+		#@clickthrough_delimiter = "#!NULL!#" if @clickthrough_delimiter = ""
 	end
 	
 	def show
