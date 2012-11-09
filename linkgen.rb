@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+@delimiter = ","
 @regex_html = /<a href="(\S*)"/
 @regex_text = /(https?\S*)/
 @matches = []
@@ -12,12 +13,12 @@ ARGV.each do |arg|
 		when ".html"
 			while line = rfile.gets
 				matchdata = line.match @regex_html
-				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
+				@matches.push([matchdata[1],rfile.path]) if matchdata
 			end
 		when ".txt"
 			while line = rfile.gets
 				matchdata = line.match @regex_text
-				@matches.push([matchdata[1],File.basename(rfile)]) if matchdata
+				@matches.push([matchdata[1],rfile.path]) if matchdata
 			end
 		else
 			puts "File extension not recognized"
@@ -32,11 +33,11 @@ end
 puts "Creating link table..."
 File.open(@linkCSV, 'w') do |wfile|
 	#Format the column headers
-	wfile.puts("FILE_NAME,LINK_NAME,LINK_URL,LINK_CATEGORY")
+	wfile.puts("LINK_NAME#{@delimiter}LINK_URL#{@delimiter}LINK_CATEGORY#{@delimiter}CLICKTHROUGH_ATTRIBUTES#{@delimiter}CLICKTHROUGH_DELIMITER#{@delimiter}FILE_PATH")
 
 	#Write each row to the CSV file
 	@matches.each do |match|
-		wfile.puts("#{match[1]},,#{match[0]},")
+		wfile.puts("#{@delimiter}#{match[0]}#{@delimiter}#{@delimiter}#{@delimiter}#{@delimiter}#{match[1]}")
 	end
 end
 
