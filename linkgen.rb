@@ -4,21 +4,21 @@
 @regex_html = /<a href="(\S*)"/
 @regex_text = /(https?\S*)/
 @matches = []
-@linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linkTable.csv"
+@linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linktable.csv"
 
 puts "Scanning HTML files for http(s) substrings..."
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
 		case File.extname(arg)
 		when ".html"
-			while line = rfile.gets
-				matchdata = line.match @regex_html
-				@matches.push([matchdata[1],rfile.path]) if matchdata
+			fcontent = rfile.read
+			fcontent.scan(@regex_html) do |match|
+				@matches.push([match.first, rfile.path])
 			end
 		when ".txt"
-			while line = rfile.gets
-				matchdata = line.match @regex_text
-				@matches.push([matchdata[1],rfile.path]) if matchdata
+			fcontent = rfile.read
+			fcontent.scan(@regex_text) do |match|
+				@matches.push([match.first, rfile.path])
 			end
 		else
 			puts "File extension not recognized"
