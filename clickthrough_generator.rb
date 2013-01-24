@@ -33,12 +33,14 @@ puts "Building clickthroughs..."
 # loop through the CSV file and generate clickthroughs based off the LINK_NAME and CLICKTHROUGH_PARAMS
 # Skip if the CLICKTHROUGH field is NOT empty
 CSV.foreach(@csv_path, :headers => true) do |row|
-	clickthrough = "$clickthrough(#{row["LINK_NAME"]}"
-	unless row["CLICKTHROUGH_PARAMS"].nil?
-		clickthrough.concat(",#{row["CLICKTHROUGH_PARAMS"]}")
+	if row["CLICKTHROUGH"].nil?
+		clickthrough = "$clickthrough(#{row["LINK_NAME"]}"
+		unless row["CLICKTHROUGH_PARAMS"].nil?
+			clickthrough.concat(",#{row["CLICKTHROUGH_PARAMS"]}")
+		end
+		clickthrough.concat(")$")
+		puts clickthrough
 	end
-	clickthrough.concat(")$")
-	puts clickthrough
 end
 
 # Replace LINK_URL with CLICKTHROUGH in each creative file
