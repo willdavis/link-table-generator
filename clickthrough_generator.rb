@@ -1,32 +1,9 @@
 #!/usr/bin/ruby
 
-class LinkTableRow
-	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes, :clickthrough_delimiter
-	
-	def initialize(string)
-		line = string.split(",")
-		@link_name = line[0]
-		@link_url = line[1]
-		@link_category = line[2]
-		@clickthrough_attributes = line[3]
-		@clickthrough_delimiter = line[4]
-		@file_path = line[5].chomp				#Chomp the trailing '\n' off the string
-		
-		#@clickthrough_delimiter = "#!NULL!#" if @clickthrough_delimiter = ""
-	end
-	
-	def show
-		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{@clickthrough_delimiter},#{file_path}"
-	end
-	
-	def build_clickthrough
-		@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
-		"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
-	end
-end
+require 'csv'
 
 @creatives = Hash.new
-@csv_buffer = []
+@csv_path = ""
 
 # Open files passed via command line and read their contents into a buffer.
 ARGV.each do |arg|
@@ -39,31 +16,37 @@ ARGV.each do |arg|
 		when ".txt"
 			@creatives["#{rfile.path}"] = rfile.read
 		when ".csv"
-			while line = rfile.gets
-				@csv_buffer.push(line)
-			end 
+			@csv_path = rfile.path
 		else
-			puts "File extension not recognized"
+			puts "\nFile Extension not recognized!\nUnable to load #{rfile.path}\n\n"
 		end
 	end
 end
 
-puts "All files loaded.\n"
+puts "\nAll files loaded.\n"
 puts "Building clickthroughs..."
 
+CSV.foreach(@csv_path, :headers => true) do |row|
+	puts row[1]
+end
 
 # loop through the CSV buffer and replace URLs with clickthroughs
-@csv_buffer.each do |line|
-	row = LinkTableRow.new(line)
-
-	if @creatives.keys.include?(row.file_path)
-		@creatives[row.file_path].sub!(row.link_url,row.build_clickthrough)
-	end
-end
+#@csv_buffer.each do |line|
+#	row = LinkTableRow.new(line)
+#
+#	if @creatives.keys.include?(row.file_path)
+#		@creatives[row.file_path].sub!(row.link_url,row.build_clickthrough)
+#	end
+#end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
-@creatives.each_key do |key|
-	File.open(key, 'w') do |wfile|
-		wfile.write(@creatives[key])
-	end
-end
+#@creatives.each_key do |key|
+#	File.open(key, 'w') do |wfile|
+#		wfile.write(@creatives[key])
+#	end
+#end
+
+#def build_clickthrough
+#	@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
+#	"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
+#end
