@@ -24,19 +24,26 @@ ARGV.each do |arg|
 end
 
 puts "\nAll files loaded.\n"
+puts "Using #{@csv_path}"
 puts "Building clickthroughs..."
 
+#	0			1			2				3			4					5
+# [LINK_NAME, LINK_URL, LINK_CATEGORY, CLICKTHROUGH, CLICKTHROUGH_PARAMS, FILE_PATH]
+
+# loop through the CSV file and generate clickthroughs based off the LINK_NAME and CLICKTHROUGH_PARAMS
+# Skip if the CLICKTHROUGH field is NOT empty
 CSV.foreach(@csv_path, :headers => true) do |row|
-	puts row[1]
+	clickthrough = "$clickthrough(#{row["LINK_NAME"]}"
+	unless row["CLICKTHROUGH_PARAMS"].nil?
+		clickthrough.concat(",#{row["CLICKTHROUGH_PARAMS"]}")
+	end
+	clickthrough.concat(")$")
+	puts clickthrough
 end
 
-# loop through the CSV buffer and replace URLs with clickthroughs
-#@csv_buffer.each do |line|
-#	row = LinkTableRow.new(line)
-#
-#	if @creatives.keys.include?(row.file_path)
-#		@creatives[row.file_path].sub!(row.link_url,row.build_clickthrough)
-#	end
+# Replace LINK_URL with CLICKTHROUGH in each creative file
+#if @creatives.keys.include?(row[5])
+#	@creatives[row[5]].sub!(row[1],row[3])
 #end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
