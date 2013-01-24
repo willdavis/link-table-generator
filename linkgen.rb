@@ -34,7 +34,7 @@ end
 
 puts "Creating link table..."
 CSV.open(@linkCSV, 'w', :headers => true) do |csv|
-	csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH_ATTRIBUTES FILE_PATH]
+	csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH FILE_PATH]
 	
 	@matches.each do |match|
 		csv << ["", "#{match[0]}", "", "", "#{match[1]}"]
