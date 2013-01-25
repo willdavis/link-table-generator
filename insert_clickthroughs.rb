@@ -23,10 +23,13 @@ ARGV.each do |arg|
 	end
 end
 
+#	0			1			2				3			4					5				6
+# [LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
+
 # Replace LINK_URL with CLICKTHROUGH in each creative file
 CSV.foreach(@csv_path, :headers => true) do |row|
 	if @creatives.keys.include?(row["FILE_PATH"])
-		@creatives[row["FILE_PATH"]].sub!(row["LINK_URL"],row["CLICKTHROUGH"])
+		@creatives[row["FILE_PATH"]].sub!(row["EXTRACTED_LINK_URL"],row["CLICKTHROUGH"])
 	end
 end
 

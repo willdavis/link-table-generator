@@ -22,8 +22,8 @@ end
 puts "Using #{@csv_path}"
 puts "Building clickthroughs..."
 
-#	0			1			2				3			4					5
-# [LINK_NAME, LINK_URL, LINK_CATEGORY, CLICKTHROUGH, CLICKTHROUGH_PARAMS, FILE_PATH]
+#	0			1			2				3			4					5				6
+# [LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
 
 # loop through the CSV file and generate clickthroughs based off the LINK_NAME and CLICKTHROUGH_PARAMS
 # Skip if the CLICKTHROUGH field is NOT empty
@@ -38,13 +38,19 @@ CSV.foreach(@csv_path, :headers => true) do |row|
 		row["CLICKTHROUGH"] = clickthrough
 	end
 	
+	#Check if the LINK_URL field is already present.
+	#If NOT, set the field to the EXTRACTED_LINK_URL's value
+	if row["LINK_URL"].nil?
+		row["LINK_URL"] = row["EXTRACTED_LINK_URL"]
+	end
+	
 	@updated_rows.push(row)
 end
 
 #Open the same CSV file and write the updated rows to it
 unless @updated_rows.empty?
-	CSV.open(@csv_path, 'wb', :headers => true) do |csv|
-		csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS FILE_PATH]
+	CSV.open(@csv_path, 'w', :headers => true) do |csv|
+		csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
 		
 		@updated_rows.each do |row|
 			csv << row

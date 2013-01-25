@@ -34,10 +34,10 @@ end
 
 puts "Creating link table..."
 CSV.open(@linkCSV, 'w', :headers => true) do |csv|
-	csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS FILE_PATH]
+	csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
 	
 	@matches.each do |match|
-		csv << ["", "#{match[0]}", "", "", "","#{match[1]}"]
+		csv << ["", "", "", "", "", "#{match[0]}", "#{match[1]}"]
 	end
 end
 
