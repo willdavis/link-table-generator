@@ -4,6 +4,7 @@ require 'csv'
 
 @creatives = Hash.new
 @csv_path = ""
+@updated_rows = []
 
 # Open files passed via command line and read their contents into a buffer.
 ARGV.each do |arg|
@@ -39,7 +40,21 @@ CSV.foreach(@csv_path, :headers => true) do |row|
 			clickthrough.concat(",#{row["CLICKTHROUGH_PARAMS"]}")
 		end
 		clickthrough.concat(")$")
-		puts clickthrough
+		
+		row["CLICKTHROUGH"] = clickthrough
+	end
+	
+	@updated_rows.push(row)
+end
+
+#Open the same CSV file and write the updated rows to it
+unless @updated_rows.empty?
+	CSV.open(@csv_path, 'wb', :headers => true) do |csv|
+		csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS FILE_PATH]
+		
+		@updated_rows.each do |row|
+			csv << row
+		end
 	end
 end
 
