@@ -1,32 +1,10 @@
 #!/usr/bin/ruby
 
-class LinkTableRow
-	attr_accessor :file_path, :link_name, :link_url, :link_category, :clickthrough_attributes, :clickthrough_delimiter
-	
-	def initialize(string)
-		line = string.split(",")
-		@link_name = line[0]
-		@link_url = line[1]
-		@link_category = line[2]
-		@clickthrough_attributes = line[3]
-		@clickthrough_delimiter = line[4]
-		@file_path = line[5].chomp				#Chomp the trailing '\n' off the string
-		
-		#@clickthrough_delimiter = "#!NULL!#" if @clickthrough_delimiter = ""
-	end
-	
-	def show
-		puts "#{link_name},#{link_url},#{link_category},#{clickthrough_attributes},#{@clickthrough_delimiter},#{file_path}"
-	end
-	
-	def build_clickthrough
-		@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
-		"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
-	end
-end
+require 'csv'
 
 @creatives = Hash.new
-@csv_buffer = []
+@csv_path = ""
+@updated_rows = []
 
 # Open files passed via command line and read their contents into a buffer.
 ARGV.each do |arg|
@@ -39,31 +17,60 @@ ARGV.each do |arg|
 		when ".txt"
 			@creatives["#{rfile.path}"] = rfile.read
 		when ".csv"
-			while line = rfile.gets
-				@csv_buffer.push(line)
-			end 
+			@csv_path = rfile.path
 		else
-			puts "File extension not recognized"
+			puts "\nFile Extension not recognized!\nUnable to load #{rfile.path}\n\n"
 		end
 	end
 end
 
-puts "All files loaded.\n"
+puts "\nAll files loaded.\n"
+puts "Using #{@csv_path}"
 puts "Building clickthroughs..."
 
+#	0			1			2				3			4					5
+# [LINK_NAME, LINK_URL, LINK_CATEGORY, CLICKTHROUGH, CLICKTHROUGH_PARAMS, FILE_PATH]
 
-# loop through the CSV buffer and replace URLs with clickthroughs
-@csv_buffer.each do |line|
-	row = LinkTableRow.new(line)
+# loop through the CSV file and generate clickthroughs based off the LINK_NAME and CLICKTHROUGH_PARAMS
+# Skip if the CLICKTHROUGH field is NOT empty
+CSV.foreach(@csv_path, :headers => true) do |row|
+	if row["CLICKTHROUGH"].nil?
+		clickthrough = "$clickthrough(#{row["LINK_NAME"]}"
+		unless row["CLICKTHROUGH_PARAMS"].nil?
+			clickthrough.concat(",#{row["CLICKTHROUGH_PARAMS"]}")
+		end
+		clickthrough.concat(")$")
+		
+		row["CLICKTHROUGH"] = clickthrough
+	end
+	
+	@updated_rows.push(row)
+end
 
-	if @creatives.keys.include?(row.file_path)
-		@creatives[row.file_path].sub!(row.link_url,row.build_clickthrough)
+#Open the same CSV file and write the updated rows to it
+unless @updated_rows.empty?
+	CSV.open(@csv_path, 'wb', :headers => true) do |csv|
+		csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS FILE_PATH]
+		
+		@updated_rows.each do |row|
+			csv << row
+		end
 	end
 end
+
+# Replace LINK_URL with CLICKTHROUGH in each creative file
+#if @creatives.keys.include?(row[5])
+#	@creatives[row[5]].sub!(row[1],row[3])
+#end
 
 # All URLs have been replaced.  Save each buffer to their corresponding files
-@creatives.each_key do |key|
-	File.open(key, 'w') do |wfile|
-		wfile.write(@creatives[key])
-	end
-end
+#@creatives.each_key do |key|
+#	File.open(key, 'w') do |wfile|
+#		wfile.write(@creatives[key])
+#	end
+#end
+
+#def build_clickthrough
+#	@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
+#	"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
+#end
