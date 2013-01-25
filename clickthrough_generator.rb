@@ -2,7 +2,6 @@
 
 require 'csv'
 
-@creatives = Hash.new
 @csv_path = ""
 @updated_rows = []
 
@@ -12,10 +11,6 @@ ARGV.each do |arg|
 		puts "Loading #{rfile.path}..."
 		
 		case File.extname(arg)
-		when ".html"
-			@creatives["#{rfile.path}"] = rfile.read
-		when ".txt"
-			@creatives["#{rfile.path}"] = rfile.read
 		when ".csv"
 			@csv_path = rfile.path
 		else
@@ -24,7 +19,6 @@ ARGV.each do |arg|
 	end
 end
 
-puts "\nAll files loaded.\n"
 puts "Using #{@csv_path}"
 puts "Building clickthroughs..."
 
@@ -57,20 +51,3 @@ unless @updated_rows.empty?
 		end
 	end
 end
-
-# Replace LINK_URL with CLICKTHROUGH in each creative file
-#if @creatives.keys.include?(row[5])
-#	@creatives[row[5]].sub!(row[1],row[3])
-#end
-
-# All URLs have been replaced.  Save each buffer to their corresponding files
-#@creatives.each_key do |key|
-#	File.open(key, 'w') do |wfile|
-#		wfile.write(@creatives[key])
-#	end
-#end
-
-#def build_clickthrough
-#	@clickthrough_attributes.gsub!(@clickthrough_delimiter, ',')
-#	"$clickthrough(#{@link_name}#{@clickthrough_attributes})$"
-#end
