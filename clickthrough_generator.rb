@@ -8,7 +8,7 @@ require 'csv'
 # Open files passed via command line and read their contents into a buffer.
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
-		puts "Loading #{rfile.path}..."
+		puts "Loading file: #{rfile.path}..."
 		
 		case File.extname(arg)
 		when ".csv"
@@ -26,8 +26,10 @@ puts "Building clickthroughs..."
 # [LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
 
 # loop through the CSV file and generate clickthroughs based off the LINK_NAME and CLICKTHROUGH_PARAMS
-# Skip if the CLICKTHROUGH field is NOT empty
 CSV.foreach(@csv_path, :headers => true) do |row|
+
+	#Check if the CLICKTHROUGH field is already present.
+	#If NOT, build a $clickthrough()$ string based off of the LINK_NAME and CLICKTHROUGH_PARAMS fields.
 	if row["CLICKTHROUGH"].nil?
 		clickthrough = "$clickthrough(#{row["LINK_NAME"]}"
 		unless row["CLICKTHROUGH_PARAMS"].nil?
@@ -36,6 +38,9 @@ CSV.foreach(@csv_path, :headers => true) do |row|
 		clickthrough.concat(")$")
 		
 		row["CLICKTHROUGH"] = clickthrough
+		
+		#Notify that a new $clickthrough()$ String was generated
+		puts "Generated: #{row["CLICKTHROUGH"]}"
 	end
 	
 	#Check if the LINK_URL field is already present.
@@ -47,7 +52,7 @@ CSV.foreach(@csv_path, :headers => true) do |row|
 	@updated_rows.push(row)
 end
 
-#Open the same CSV file and write the updated rows to it
+#Re-open the CSV file and write the updated rows to it
 unless @updated_rows.empty?
 	CSV.open(@csv_path, 'w', :headers => true) do |csv|
 		csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
@@ -56,4 +61,10 @@ unless @updated_rows.empty?
 			csv << row
 		end
 	end
+		
+	#Notify that the script has finished updating the CSV file.
+	puts "\nCSV file has been successfully updated."
+else
+	#Notify that the script did not update anything.
+	puts "\nNo changes to the CSV file were made."
 end

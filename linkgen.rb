@@ -8,9 +8,12 @@ require 'csv'
 @matches = []
 @linkCSV = "#{File.dirname(__FILE__)}/#{Time.now.to_s.gsub(/ |:/,'')}_linktable.csv"
 
-puts "Scanning HTML files for http(s) substrings..."
+puts "\nScanning HTML files for http(s) substrings..."
 ARGV.each do |arg|
 	File.open(arg, 'r') do |rfile|
+	
+		puts "Loading file: #{rfile.path}..."
+	
 		case File.extname(arg)
 		when ".html"
 			fcontent = rfile.read
@@ -29,10 +32,10 @@ ARGV.each do |arg|
 end
 
 @matches.each do |match|
-	puts "Found: #{match[0]} in: #{match[1]}"
+	puts "\nFound URL: \"#{match[0]}\" in file: #{match[1]}"
 end
 
-puts "Creating link table..."
+puts "\nCreating link table..."
 CSV.open(@linkCSV, 'w', :headers => true) do |csv|
 	csv << %w[LINK_NAME LINK_URL LINK_CATEGORY CLICKTHROUGH CLICKTHROUGH_PARAMS EXTRACTED_LINK_URL FILE_PATH]
 	
@@ -41,6 +44,5 @@ CSV.open(@linkCSV, 'w', :headers => true) do |csv|
 	end
 end
 
-puts "All done!"
 puts "link table generated at: #{@linkCSV}"
 puts "Total URL's extracted: #{@matches.count}"
